@@ -1,0 +1,34 @@
+package accounts
+
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+
+	"yatter-backend-go/app/handler/httperror"
+
+	"github.com/go-chi/chi"
+)
+
+func (h *handler) GetFollowing(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	username := chi.URLParam(r, "username")
+	limit, _ := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 64)
+
+	a := h.app.Dao.Account() // domain/repository の取得
+	followingAccount, err := a.FindByUsername(ctx, username)
+	if err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+
+	re := h.app.Dao.Relation()
+	allFollowings, err := re.GetAllFollowingsById(ctx, followingAccount.ID, limit)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(allFollowings); err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+}
