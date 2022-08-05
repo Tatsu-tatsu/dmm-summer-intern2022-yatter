@@ -17,8 +17,8 @@ func (h *handler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 	limitQuery := r.URL.Query().Get("limit")
 	limit, _ := strconv.ParseInt(limitQuery, 10, 64)
 
-	// max_id, _ := strconv.ParseInt(r.URL.Query().Get("max_id"), 10, 64)
-	// since_id, _ := strconv.ParseInt(r.URL.Query().Get("since_id"), 10, 64)
+	max_id, _ := strconv.ParseInt(r.URL.Query().Get("max_id"), 10, 64)
+	since_id, _ := strconv.ParseInt(r.URL.Query().Get("since_id"), 10, 64)
 
 	const defaultLimit int64 = 40
 	if limitQuery == "" {
@@ -33,7 +33,7 @@ func (h *handler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	re := h.app.Dao.Relation()
-	allFollowers, err := re.GetAllFollowersById(ctx, followeeAccount.ID, limit)
+	allFollowers, err := re.GetAllFollowersById(ctx, followeeAccount.ID, limit, since_id, max_id)
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(allFollowers); err != nil {

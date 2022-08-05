@@ -75,9 +75,15 @@ func (r *relation) GetAllFollowingsById(ctx context.Context, follower_id int64, 
 	return entity, nil
 }
 
-func (r *relation) GetAllFollowersById(ctx context.Context, followee_id int64, limit int64) ([]*object.Account, error) {
+func (r *relation) GetAllFollowersById(ctx context.Context, followee_id int64, limit int64, since_id int64, max_id int64) ([]*object.Account, error) {
 	entity := make([]*object.Account, 0)
-	rows, err := r.db.QueryContext(ctx, "select account.* from relation INNER JOIN account ON account.id = relation.follower_id where followee_id = ? LIMIT ?", followee_id, limit)
+	var rows *sql.Rows
+	var err error
+	if max_id == 0 {
+		rows, err = r.db.QueryContext(ctx, "select account.* from relation INNER JOIN account ON account.id = relation.follower_id where followee_id = ? and ? <= follower_id LIMIT ?", followee_id, since_id, limit)
+	} else {
+		rows, err = r.db.QueryContext(ctx, "select account.* from relation INNER JOIN account ON account.id = relation.follower_id where followee_id = ? and ? <= follower_id and follower_id <= ? LIMIT ?", followee_id, since_id, max_id, limit)
+	}
 	err = sqlx.StructScan(rows, &entity)
 
 	if err != nil {
