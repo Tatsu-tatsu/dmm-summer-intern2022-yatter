@@ -25,7 +25,7 @@ func NewRelation(db *sqlx.DB) repository.Relation {
 
 func (r *relation) AddRelation(ctx context.Context, relation object.Relation) error {
 	// relationship := new(object.Relation)
-	_, err := r.db.ExecContext(ctx, "INSERT INTO relation (follower_id, followee_id) VALUES (?, ?)", relation.FollowerId, relation.FolloweeId)
+	_, err := r.db.ExecContext(ctx, "INSERT INTO relation (follower_id, followee_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE follower_id = follower_id", relation.FollowerId, relation.FolloweeId)
 
 	if err != nil {
 		return fmt.Errorf("%w", err)
