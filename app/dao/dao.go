@@ -14,6 +14,8 @@ type (
 		// Get account repository
 		Account() repository.Account
 		Status() repository.Status
+		Timeline() repository.Timeline
+		Relation() repository.Relation
 
 		// Clear all data in DB
 		InitAll() error
@@ -41,6 +43,14 @@ func (d *dao) Account() repository.Account {
 
 func (d *dao) Status() repository.Status {
 	return NewStatus(d.db)
+}
+
+func (d *dao) Timeline() repository.Timeline {
+	return NewTimeline(d.db)
+}
+
+func (d *dao) Relation() repository.Relation {
+	return NewRelation(d.db)
 }
 
 func (d *dao) InitAll() error {
