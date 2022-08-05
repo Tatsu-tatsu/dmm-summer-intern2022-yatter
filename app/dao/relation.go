@@ -30,7 +30,6 @@ func (r *relation) AddRelation(ctx context.Context, relation object.Relation) er
 	if err != nil {
 		return fmt.Errorf("%w", err)
 	}
-
 	return nil
 }
 
@@ -57,6 +56,23 @@ func (r *relation) FindRelationById(ctx context.Context, follower_id int64, foll
 	}
 
 	return follow, nil
+}
+
+func (r *relation) GetAllFollowingsById(ctx context.Context, follower_id int64, limit int64) ([]*object.Account, error) {
+	entity := make([]*object.Account, 0)
+	rows, err := r.db.QueryContext(ctx, "select account.* from relation INNER JOIN account ON account.id = relation.followee_id where follower_id = ? LIMIT ?", follower_id, limit)
+	err = sqlx.StructScan(rows, &entity)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	defer rows.Close()
+
+	return entity, nil
 }
 
 func (r *relation) DeleteRelation(ctx context.Context, follower_id int64, followee_id int64) error {
