@@ -2,9 +2,9 @@ package object
 
 type (
 	RelationID = int64
-	// Status account
+	// relation information
 	Relation struct {
-		// The internal ID of the account
+		// The internal ID of the relation
 		ID RelationID `json:"-"`
 
 		// フォローしたID
@@ -13,7 +13,7 @@ type (
 		// フォローされたID
 		FolloweeId int64 `json:"-" db:"followee_id"`
 
-		// The time the account was created
+		// The time the relation was created
 		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
 	}
 

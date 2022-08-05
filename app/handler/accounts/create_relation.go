@@ -11,15 +11,14 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// Handle request for `POST /v1/accounts`
 func (h *handler) CreateRelation(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	account := auth.AccountOf(r)
 	username := chi.URLParam(r, "username")
 
-	a := h.app.Dao.Account() // domain/repository の取得
-	followeeAccount, err := a.FindByUsername(ctx, username)
+	a := h.app.Dao.Account()                                // domain/repository の取得
+	followeeAccount, err := a.FindByUsername(ctx, username) // フォローされた側のアカウントを取得
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
@@ -35,6 +34,7 @@ func (h *handler) CreateRelation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// POST /accounts/{username}/follow のレスポンス用のfollowを取得
 	follow, err := re.FindRelationById(ctx, account.ID, followeeAccount.ID)
 
 	w.Header().Set("Content-Type", "application/json")

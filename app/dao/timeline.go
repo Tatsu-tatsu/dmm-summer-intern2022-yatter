@@ -18,7 +18,7 @@ type (
 	}
 )
 
-// Create accout repository
+// Create timeline repository
 func NewTimeline(db *sqlx.DB) repository.Timeline {
 	return &timeline{db: db}
 }

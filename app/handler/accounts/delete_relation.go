@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// POST /accounts/{username}/unfollow 機能
 func (h *handler) DeleteRelation(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -23,21 +24,13 @@ func (h *handler) DeleteRelation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// relation := new(object.Relation)
-	// relation.FollowerId = account.ID
-	// relation.FolloweeId = followeeAccount.ID
-
 	re := h.app.Dao.Relation() // domain/repository の取得
-	// if err := re.AddRelation(ctx, *relation); err != nil {
-	// 	httperror.InternalServerError(w, err)
-	// 	return
-	// }
-
 	if err := re.DeleteRelation(ctx, account.ID, followeeAccount.ID); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
 
+	// to Response body
 	follow, err := re.FindRelationById(ctx, account.ID, followeeAccount.ID)
 
 	w.Header().Set("Content-Type", "application/json")
