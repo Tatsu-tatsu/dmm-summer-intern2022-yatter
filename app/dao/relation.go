@@ -58,3 +58,13 @@ func (r *relation) FindRelationById(ctx context.Context, follower_id int64, foll
 
 	return follow, nil
 }
+
+func (r *relation) DeleteRelation(ctx context.Context, follower_id int64, followee_id int64) error {
+	_, err := r.db.ExecContext(ctx, "delete from relation where follower_id = ? and followee_id = ?", follower_id, followee_id)
+
+	if err != nil {
+		return fmt.Errorf("%w", err)
+	}
+
+	return nil
+}
