@@ -29,6 +29,7 @@ func (h *handler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// {username}のフォローをすべて取得
 	re := h.app.Dao.Relation()
 	allFollowings, err := re.GetAllFollowingsById(ctx, followingAccount.ID, limit)
 

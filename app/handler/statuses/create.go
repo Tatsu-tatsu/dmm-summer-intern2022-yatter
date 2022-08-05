@@ -9,12 +9,10 @@ import (
 	"yatter-backend-go/app/handler/httperror"
 )
 
-// Request body for `POST /v1/accounts`
 type AddRequest struct {
 	Status string
 }
 
-// Handle request for `POST /v1/accounts`
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -24,15 +22,14 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// var r *http.Request
 	account := auth.AccountOf(r)
 
 	status := new(object.Status)
 	status.Content = req.Status
 	status.AccountId = account.ID
 
-	a := h.app.Dao.Status() // domain/repository の取得
-	if err := a.AddStatus(ctx, *status); err != nil {
+	s := h.app.Dao.Status() // domain/repository の取得
+	if err := s.AddStatus(ctx, *status); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}

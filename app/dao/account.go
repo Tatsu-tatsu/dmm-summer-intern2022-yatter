@@ -38,6 +38,7 @@ func (r *account) FindByUsername(ctx context.Context, username string) (*object.
 	return entity, nil
 }
 
+// AddAccount : ユーザーの追加
 func (r *account) AddAccount(ctx context.Context, account object.Account) error {
 	_, err := r.db.ExecContext(ctx, "INSERT INTO account (username, password_hash) VALUES (?, ?)", account.Username, account.PasswordHash)
 	if err != nil {

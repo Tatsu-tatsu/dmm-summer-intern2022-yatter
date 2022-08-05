@@ -20,6 +20,7 @@ func (h *handler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 	max_id, _ := strconv.ParseInt(r.URL.Query().Get("max_id"), 10, 64)
 	since_id, _ := strconv.ParseInt(r.URL.Query().Get("since_id"), 10, 64)
 
+	// limit に記入がないときのdefault
 	const defaultLimit int64 = 40
 	if limitQuery == "" {
 		limit = defaultLimit
@@ -32,6 +33,7 @@ func (h *handler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// {username}のフォロワーをすべて取得
 	re := h.app.Dao.Relation()
 	allFollowers, err := re.GetAllFollowersById(ctx, followeeAccount.ID, limit, since_id, max_id)
 

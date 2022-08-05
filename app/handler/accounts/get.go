@@ -9,7 +9,6 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// Handle request for `POST /v1/accounts`
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

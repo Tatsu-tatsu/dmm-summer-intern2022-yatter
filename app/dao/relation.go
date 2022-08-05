@@ -12,7 +12,7 @@ import (
 )
 
 type (
-	// Implementation for repository.Account
+	// Implementation for repository.Relation
 	relation struct {
 		db *sqlx.DB
 	}
@@ -24,7 +24,6 @@ func NewRelation(db *sqlx.DB) repository.Relation {
 }
 
 func (r *relation) AddRelation(ctx context.Context, relation object.Relation) error {
-	// relationship := new(object.Relation)
 	_, err := r.db.ExecContext(ctx, "INSERT INTO relation (follower_id, followee_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE follower_id = follower_id", relation.FollowerId, relation.FolloweeId)
 
 	if err != nil {
@@ -45,6 +44,7 @@ func (r *relation) FindRelationById(ctx context.Context, follower_id int64, foll
 		return nil, fmt.Errorf("%w", err)
 	}
 
+	// フォローする人とフォローされる人を反対にして検索
 	relationshipReverse := new(object.Relation)
 	err = r.db.QueryRowxContext(ctx, "select * from relation where follower_id = ? and followee_id = ?", followee_id, follower_id).StructScan(relationshipReverse)
 	if err == nil {
@@ -79,6 +79,7 @@ func (r *relation) GetAllFollowersById(ctx context.Context, followee_id int64, l
 	entity := make([]*object.Account, 0)
 	var rows *sql.Rows
 	var err error
+	// max_idに記入がないとき、初期値0となるので条件から排除
 	if max_id == 0 {
 		rows, err = r.db.QueryContext(ctx, "select account.* from relation INNER JOIN account ON account.id = relation.follower_id where followee_id = ? and ? <= follower_id LIMIT ?", followee_id, since_id, limit)
 	} else {
