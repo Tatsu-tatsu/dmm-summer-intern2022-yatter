@@ -1,0 +1,15 @@
+package repository
+
+import (
+	"context"
+
+	"yatter-backend-go/app/domain/object"
+)
+
+type Relation interface {
+	AddRelation(ctx context.Context, relation object.Relation) error
+	FindRelationById(ctx context.Context, follower_id int64, followee_id int64) (*object.Follow, error)
+	GetAllFollowingsById(ctx context.Context, follower_id int64, limit int64) ([]*object.Account, error)
+	GetAllFollowersById(ctx context.Context, followee_id int64, limit int64, since_id int64, max_id int64) ([]*object.Account, error)
+	DeleteRelation(ctx context.Context, follower_id int64, followee_id int64) error
+}
