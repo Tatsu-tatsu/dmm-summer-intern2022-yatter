@@ -14,7 +14,13 @@ func (h *handler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	username := chi.URLParam(r, "username")
-	limit, _ := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 64)
+	limitQuery := r.URL.Query().Get("limit")
+	limit, _ := strconv.ParseInt(limitQuery, 10, 64)
+
+	const defaultLimit int64 = 40
+	if limitQuery == "" {
+		limit = defaultLimit
+	}
 
 	a := h.app.Dao.Account() // domain/repository の取得
 	followingAccount, err := a.FindByUsername(ctx, username)
