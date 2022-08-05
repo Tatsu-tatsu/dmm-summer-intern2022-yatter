@@ -32,9 +32,10 @@ func (r *timeline) FindPublicTimelines(ctx context.Context) ([]*object.Status, e
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
-
 		return nil, fmt.Errorf("%w", err)
 	}
+
+	defer rows.Close()
 
 	return entity, nil
 }
