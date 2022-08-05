@@ -4,15 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/handler/auth"
 	"yatter-backend-go/app/handler/httperror"
 
 	"github.com/go-chi/chi"
 )
 
-// Handle request for `POST /v1/accounts`
-func (h *handler) CreateRelation(w http.ResponseWriter, r *http.Request) {
+func (h *handler) DeleteRelation(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	account := auth.AccountOf(r)
@@ -25,12 +23,17 @@ func (h *handler) CreateRelation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	relation := new(object.Relation)
-	relation.FollowerId = account.ID
-	relation.FolloweeId = followeeAccount.ID
+	// relation := new(object.Relation)
+	// relation.FollowerId = account.ID
+	// relation.FolloweeId = followeeAccount.ID
 
 	re := h.app.Dao.Relation() // domain/repository の取得
-	if err := re.AddRelation(ctx, *relation); err != nil {
+	// if err := re.AddRelation(ctx, *relation); err != nil {
+	// 	httperror.InternalServerError(w, err)
+	// 	return
+	// }
+
+	if err := re.DeleteRelation(ctx, account.ID, followeeAccount.ID); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
